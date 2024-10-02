@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Formulario de Inserción</title>
+</head>
+<body>
+  <h1>Insertar Nombre en la Base de Datos</h1>
+  
+  <form id="insertForm">
+    <label for="nombre">Nombre:</label>
+    <input type="text" id="nombre" name="nombre" required>
+    <button type="submit">Insertar</button>
+  </form>
+
+  <p id="message"></p>
+
+  <script>
+    document.getElementById('insertForm').addEventListener('submit', async function(event) {
+      event.preventDefault();
+      
+      const nombre = document.getElementById('nombre').value;
+      const messageEl = document.getElementById('message');
+      
+      try {
+        const response = await fetch('http://localhost:3000/insert', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ nombre }), // Enviar el valor de `nombre`
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+          messageEl.textContent = `Inserción exitosa: Nombre ${data.nombre}`;
+        } else {
+          messageEl.textContent = `Error: ${data.error}`;
+        }
+      } catch (error) {
+        console.error('Error al insertar:', error);
+        messageEl.textContent = 'Error al conectar con el servidor.';
+      }
+    });
+  </script>
+</body>
+</html>
+
