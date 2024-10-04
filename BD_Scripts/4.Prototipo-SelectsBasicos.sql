@@ -2,28 +2,24 @@ USE prototipo;
 
 /*********************** PROTOTIPO SELECTS BASICOS ***********************/
 -- 1. Tabla Pais
-SELECT IDPais, Pais FROM Pais;
+SELECT IDPais, Pais 
+FROM Pais;
 
 -- 2. Tabla Provincia
-SELECT Provincia.IDProvincia, Provincia.Provincia, Pais.Pais 
-FROM Provincia
-JOIN Pais ON Provincia.IDPais = Pais.IDPais;
+SELECT IDProvincia, Provincia
+FROM Provincia;
 
 -- 3. Tabla Canton
-SELECT Canton.IDCanton, Canton.Canton, Provincia.Provincia, Pais.Pais 
-FROM Canton
-JOIN Provincia ON Canton.IDProvincia = Provincia.IDProvincia
-JOIN Pais ON Provincia.IDPais = Pais.IDPais;
+SELECT IDCanton, Canton
+FROM Canton;
 
 -- 4. Tabla Distrito
-SELECT Distrito.IDDistrito, Distrito.Distrito, Canton.Canton, Provincia.Provincia, Pais.Pais 
-FROM Distrito
-JOIN Canton ON Distrito.IDCanton = Canton.IDCanton
-JOIN Provincia ON Canton.IDProvincia = Provincia.IDProvincia
-JOIN Pais ON Provincia.IDPais = Pais.IDPais;
+SELECT IDDistrito, Distrito
+FROM Distrito;
 
 -- 5. Tabla TipoCuenta
-SELECT IDTipoCuenta, TipoCuenta FROM TipoCuenta;
+SELECT IDTipoCuenta, TipoCuenta 
+FROM TipoCuenta;
 
 -- 6. Tabla Cuenta
 SELECT Cuenta.IDCuenta, Cuenta.PrimerNombre, Cuenta.SegundoNombre, Cuenta.PrimerApellido, Cuenta.SegundoApellido, 
