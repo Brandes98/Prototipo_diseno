@@ -22,7 +22,7 @@ SELECT IDTipoCuenta, TipoCuenta
 FROM TipoCuenta;
 
 -- 6. Tabla Cuenta
-SELECT Cuenta.IDCuenta, Cuenta.PrimerNombre, Cuenta.SegundoNombre, Cuenta.PrimerApellido, Cuenta.SegundoApellido, 
+SELECT Cuenta.IDCuenta, Cuenta.Estado, Cuenta.PrimerNombre, Cuenta.SegundoNombre, Cuenta.PrimerApellido, Cuenta.SegundoApellido, 
        Cuenta.CorreoElectronico, TipoCuenta.TipoCuenta, Distrito.Distrito, Canton.Canton, Provincia.Provincia, Pais.Pais
 FROM Cuenta
 JOIN TipoCuenta ON Cuenta.IDTipoCuenta = TipoCuenta.IDTipoCuenta
@@ -82,6 +82,6 @@ JOIN MaterialTrabajo ON MaterialesPorTrabajoEspecial.IDMaterial = MaterialTrabaj
 JOIN CotizacionEspecial ON MaterialesPorTrabajoEspecial.IDCortizacionEsp = CotizacionEspecial.IDCotizacionEsp;
 
 -- 16. Tabla Comentario
-SELECT Comentario.IDComentario, Comentario.Comentario, Cuenta.PrimerNombre, Cuenta.PrimerApellido
+SELECT Comentario.IDComentario, Comentario.Comentario, Comentario.Estado, Cuenta.PrimerNombre, Cuenta.PrimerApellido
 FROM Comentario
 JOIN Cuenta ON Comentario.IDCuenta = Cuenta.IDCuenta;

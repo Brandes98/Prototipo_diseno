@@ -47,6 +47,7 @@ CREATE TABLE `Cuenta` (
   `SegundoApellido` VARCHAR(100),
   `CorreoElectronico` VARCHAR(200),
   `Clave` VARCHAR(100),
+  `Estado` BOOL,
   PRIMARY KEY (`IDCuenta`),
   FOREIGN KEY (`IDDistrito`) REFERENCES `Distrito`(`IDDistrito`),
   FOREIGN KEY (`IDTipoCuenta`) REFERENCES `TipoCuenta`(`IDTipoCuenta`)
@@ -137,6 +138,7 @@ CREATE TABLE `Comentario` (
   `IDComentario` INT auto_increment,
   `IDCuenta` INT,
   `Comentario` VARCHAR(300),
+  `Estado` BOOL,
   PRIMARY KEY (`IDComentario`),
   FOREIGN KEY (`IDCuenta`) REFERENCES `Cuenta`(`IDCuenta`)
 );

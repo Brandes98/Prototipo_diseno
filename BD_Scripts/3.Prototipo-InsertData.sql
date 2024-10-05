@@ -37,9 +37,9 @@ INSERT INTO TipoCuenta (TipoCuenta) VALUES
 ('Administrador'),
 ('Cliente');
 
-INSERT INTO Cuenta (IDTipoCuenta, IDDistrito, PrimerNombre, SegundoNombre, PrimerApellido, SegundoApellido, CorreoElectronico, Clave) VALUES 
-(1, 1, 'Juan', 'Carlos', 'Gómez', 'Pérez', 'juan.gomez@example.com', 'pass123'),
-(2, 3, 'Ana', 'María', 'Rodríguez', 'Lopez', 'ana.rodriguez@example.com', 'securePass456');
+INSERT INTO Cuenta (IDTipoCuenta, IDDistrito, PrimerNombre, SegundoNombre, PrimerApellido, SegundoApellido, CorreoElectronico, Clave, Estado) VALUES 
+(1, 1, 'Juan', 'Carlos', 'Gómez', 'Pérez', 'juan.gomez@example.com', 'pass123', 1),
+(2, 3, 'Ana', 'María', 'Rodríguez', 'Lopez', 'ana.rodriguez@example.com', 'securePass456', 1);
 
 INSERT INTO Estilo (Nombre) VALUES 
 ('Moderno'),
@@ -83,6 +83,6 @@ INSERT INTO MaterialesPorTrabajoEspecial (IDMaterial, IDCortizacionEsp) VALUES
 (1, 1),
 (2, 2);
 
-INSERT INTO Comentario (IDCuenta, Comentario) VALUES 
-(1, 'Muy buen trabajo, recomendable.'),
-(2, 'Excelente servicio y materiales de calidad.');
+INSERT INTO Comentario (IDCuenta, Comentario, Estado) VALUES 
+(1, 'Muy buen trabajo, recomendable.', FALSE),
+(2, 'Excelente servicio y materiales de calidad.', TRUE);
