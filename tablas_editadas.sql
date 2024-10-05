@@ -174,9 +174,9 @@ INSERT INTO TipoCuenta (TipoCuenta) VALUES
 ('Administrador'),
 ('Cliente');
 
-INSERT INTO Cuenta (IDTipoCuenta, IDDistrito, PrimerNombre, SegundoNombre, PrimerApellido, SegundoApellido, CorreoElectronico, Clave, Estado) VALUES 
-(1, 1, 'Juan', 'Carlos', 'Gómez', 'Pérez', 'juan.gomez@example.com', 'pass123', 1),
-(2, 3, 'Ana', 'María', 'Rodríguez', 'Lopez', 'ana.rodriguez@example.com', 'securePass456', 1);
+INSERT INTO Cuenta (IDTipoCuenta, IDDistrito, PrimerNombre, SegundoNombre, PrimerApellido, SegundoApellido, CorreoElectronico, Clave) VALUES 
+(1, 1, 'Juan', 'Carlos', 'Gómez', 'Pérez', 'juan.gomez@example.com', 'pass123'),
+(2, 3, 'Ana', 'María', 'Rodríguez', 'Lopez', 'ana.rodriguez@example.com', 'securePass456');
 
 -- Tipo Cuenta --
 insert into tipocuenta(TipoCuenta) values ('Administrador');
@@ -225,33 +225,36 @@ insert into tipomaterial(IDUnidadMedida, Nombre) values (3, 'PVC');
 insert into tipomaterial(IDUnidadMedida, Nombre) values (6, 'Cemento');
 
 -- Material Trabajo --
-INSERT INTO tipomaterial (IDUnidadMedida, Nombre) VALUES (1, 'Tubo cuadrado');
-INSERT INTO tipomaterial (IDUnidadMedida, Nombre) VALUES (1, 'Tubo redondo');
-INSERT INTO tipomaterial (IDUnidadMedida, Nombre) VALUES (5, 'Tubo rectangular');
-INSERT INTO tipomaterial (IDUnidadMedida, Nombre) VALUES (2, 'Vigas en I');
-INSERT INTO tipomaterial (IDUnidadMedida, Nombre) VALUES (2, 'Vigas en H');
-INSERT INTO tipomaterial (IDUnidadMedida, Nombre) VALUES (2, 'Platinas');
-INSERT INTO tipomaterial (IDUnidadMedida, Nombre) VALUES (3, 'Perfiles U');
-INSERT INTO tipomaterial (IDUnidadMedida, Nombre) VALUES (3, 'Malla de alambre soldado');
-INSERT INTO tipomaterial (IDUnidadMedida, Nombre) VALUES (6, 'Tornillos autoperforantes');
-INSERT INTO tipomaterial (IDUnidadMedida, Nombre) VALUES (6, 'Tornillos de cabeza hexagonal');
-INSERT INTO tipomaterial (IDUnidadMedida, Nombre) VALUES (6, 'Tornillos de rosca fina');
-INSERT INTO tipomaterial (IDUnidadMedida, Nombre) VALUES (4, 'Clavos galvanizados');
-INSERT INTO tipomaterial (IDUnidadMedida, Nombre) VALUES (4, 'Clavos de concreto');
-INSERT INTO tipomaterial (IDUnidadMedida, Nombre) VALUES (1, 'Tornillos de anclaje');
-INSERT INTO tipomaterial (IDUnidadMedida, Nombre) VALUES (3, 'Remaches');
-INSERT INTO tipomaterial (IDUnidadMedida, Nombre) VALUES (12, 'Tornillos de expansión');
-INSERT INTO tipomaterial (IDUnidadMedida, Nombre) VALUES (1, 'Placas de anclaje');
-INSERT INTO tipomaterial (IDUnidadMedida, Nombre) VALUES (1, 'Tuercas');
-INSERT INTO tipomaterial (IDUnidadMedida, Nombre) VALUES (1, 'Arandelas');
-INSERT INTO tipomaterial (IDUnidadMedida, Nombre) VALUES (9, 'Bisagras');
-INSERT INTO tipomaterial (IDUnidadMedida, Nombre) VALUES (1, 'Pernos');
-INSERT INTO tipomaterial (IDUnidadMedida, Nombre) VALUES (6, 'Cadenas');
-INSERT INTO tipomaterial (IDUnidadMedida, Nombre) VALUES (3, 'Abrazaderas para tubos');
-INSERT INTO tipomaterial (IDUnidadMedida, Nombre) VALUES (11, 'Repisa');
-INSERT INTO tipomaterial (IDUnidadMedida, Nombre) VALUES (10, 'Pintura exteriores');
-INSERT INTO tipomaterial (IDUnidadMedida, Nombre) VALUES (10, 'Pintura acero');
-
+INSERT INTO materialtrabajo (IDUnidadMedida, Nombre) VALUES (1, 'Tubo cuadrado',5000);
+INSERT INTO materialtrabajo (IDUnidadMedida, Nombre) VALUES (1, 'Tubo redondo',6000);
+INSERT INTO materialtrabajo (IDUnidadMedida, Nombre) VALUES (5, 'Tubo rectangular',10000);
+INSERT INTO materialtrabajo (IDUnidadMedida, Nombre) VALUES (2, 'Vigas en I',13000);
+INSERT INTO materialtrabajo (IDUnidadMedida, Nombre) VALUES (2, 'Vigas en H',20000);
+INSERT INTO materialtrabajo (IDUnidadMedida, Nombre) VALUES (2, 'Platinas',23000);
+INSERT INTO materialtrabajo (IDUnidadMedida, Nombre) VALUES (3, 'Perfiles U',23000);
+INSERT INTO materialtrabajo (IDUnidadMedida, Nombre) VALUES (3, 'Malla de alambre soldado',32000);
+INSERT INTO materialtrabajo (IDUnidadMedida, Nombre) VALUES (6, 'Tornillos autoperforantes',2000);
+INSERT INTO materialtrabajo (IDUnidadMedida, Nombre) VALUES (6, 'Tornillos de cabeza hexagonal',2300);
+INSERT INTO materialtrabajo (IDUnidadMedida, Nombre) VALUES (6, 'Tornillos de rosca fina',1300);
+INSERT INTO materialtrabajo (IDUnidadMedida, Nombre) VALUES (4, 'Clavos galvanizados',4000);
+INSERT INTO materialtrabajo (IDUnidadMedida, Nombre) VALUES (4, 'Clavos de concreto',4000);
+INSERT INTO materialtrabajo (IDUnidadMedida, Nombre) VALUES (1, 'Tornillos de anclaje',4000);
+INSERT INTO materialtrabajo (IDUnidadMedida, Nombre) VALUES (3, 'Remaches',12300);
+INSERT INTO materialtrabajo (IDUnidadMedida, Nombre) VALUES (12, 'Tornillos de expansión',2300);
+INSERT INTO materialtrabajo (IDUnidadMedida, Nombre) VALUES (1, 'Placas de anclaje',10000);
+INSERT INTO materialtrabajo (IDUnidadMedida, Nombre) VALUES (1, 'Tuercas',200);
+INSERT INTO materialtrabajo (IDUnidadMedida, Nombre) VALUES (1, 'Arandelas',100);
+INSERT INTO materialtrabajo (IDUnidadMedida, Nombre) VALUES (9, 'Bisagras',2300);
+INSERT INTO materialtrabajo (IDUnidadMedida, Nombre) VALUES (1, 'Pernos',1000);
+INSERT INTO materialtrabajo (IDUnidadMedida, Nombre) VALUES (6, 'Cadenas',3000);
+INSERT INTO materialtrabajo (IDUnidadMedida, Nombre) VALUES (3, 'Abrazaderas para tubos',4000);
+INSERT INTO materialtrabajo (IDUnidadMedida, Nombre) VALUES (11, 'Repisa',5000);
+INSERT INTO materialtrabajo (IDUnidadMedida, Nombre) VALUES (10, 'Pintura exteriores',13000);
+INSERT INTO materialtrabajo (IDUnidadMedida, Nombre) VALUES (10, 'Pintura acero',13000);
+INSERT INTO Estilo (Nombre) VALUES 
+('Moderno'),
+('Clásico'),
+('Colonial');
 INSERT INTO CotizacionEspecial (IDCuenta, Nombre, Descripcion, FechaRecibido, Traslado, Costo) VALUES 
 (1, 'Trabajo Especial 1', 'Descripción del trabajo especial 1', '2024-09-01 12:00:00', TRUE, 1500.00),
 (2, 'Trabajo Especial 2', 'Descripción del trabajo especial 2', '2024-09-05 14:00:00', FALSE, 2500.00);
@@ -261,14 +264,34 @@ INSERT INTO CotizacionDeterminada (IDCuenta, IDTipoTrabajo, IDEstilo, FechaRecib
 (2, 2, 2, '2024-09-12 09:00:00', '2024-09-22 14:00:00', FALSE, 3.0, 2.0, 4500.00);
 
 INSERT INTO MaterialesPorTrabajoDeterminado (IDMaterial, IDCortizacionDet, Cantidad) VALUES 
-(1, 1, 5.0),
-(2, 1, 3.0),
-(3, 2, 2.0);
+(1, 3, 5.0),
+(1, 4, 3.0),
+(1, 4, 2.0);
 
 INSERT INTO MaterialesPorTrabajoEspecial (IDMaterial, IDCortizacionEsp) VALUES 
 (1, 1),
 (2, 2);
 
-INSERT INTO Comentario (IDCuenta, Comentario, Estado) VALUES 
-(1, 'Muy buen trabajo, recomendable.', FALSE),
-(2, 'Excelente servicio y materiales de calidad.', TRUE);
+INSERT INTO Comentario (IDCuenta, Comentario) VALUES 
+(1, 'Muy buen trabajo, recomendable.'),
+(2, 'Excelente servicio y materiales de calidad.');
+drop table materialesportrabajodeterminado;
+DROP TABLE materialesportrabajoespecial;
+CREATE TABLE `MaterialesPorTrabajoDeterminado` (
+  `IDMaterial` INT,
+  `IDCortizacionDet` INT,
+  `Cantidad` FLOAT,
+  PRIMARY KEY (`IDMaterial`, `IDCortizacionDet`),
+  FOREIGN KEY (`IDMaterial`) REFERENCES `MaterialTrabajo`(`IDMaterialTrabajo`),
+  FOREIGN KEY (`IDCortizacionDet`) REFERENCES `CotizacionDeterminada`(`IDCotizacionDet`)
+);
+
+CREATE TABLE `MaterialesPorTrabajoEspecial` (
+  `IDMaterial` INT,
+  `IDCortizacionEsp` INT,
+  PRIMARY KEY (`IDMaterial`, `IDCortizacionEsp`),
+  FOREIGN KEY (`IDCortizacionEsp`) REFERENCES `CotizacionEspecial`(`IDCotizacionEsp`),
+  FOREIGN KEY (`IDMaterial`) REFERENCES `MaterialTrabajo`(`IDMaterialTrabajo`)
+);
+select * from cotizaciondeterminada;
+select * from materialtrabajo;
