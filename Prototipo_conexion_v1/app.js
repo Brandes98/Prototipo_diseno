@@ -161,6 +161,51 @@ document.addEventListener('DOMContentLoaded', function () {
         });
 });
 
+document.addEventListener('DOMContentLoaded', function () {
+    // Función genérica para cargar datos en un select
+    function cargarDatos(url, selectId, mensajeCargando, mensajeError, campo) {
+        // Realizar la petición
+        fetch(url)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok: ' + response.statusText);
+                }
+                return response.json();
+            })
+            .then(data => {
+                const select = document.getElementById(selectId);
+
+                // Limpiar las opciones existentes (excepto la primera)
+                select.innerHTML = `<option value="">${mensajeCargando}</option>`;
+
+                // Verificar si hay datos
+                if (data.length > 0) {
+                    data.forEach(item => {
+                        const option = document.createElement('option');
+                        option.value = item[campo];  // Valor de la opción
+                        option.textContent = item[campo];  // Texto de la opción
+                        select.appendChild(option);
+                    });
+                } else {
+                    const option = document.createElement('option');
+                    option.textContent = 'No hay opciones disponibles';
+                    select.appendChild(option);
+                }
+            })
+            .catch(error => {
+                const select = document.getElementById(selectId);
+                select.innerHTML = `<option value="">${mensajeError}</option>`;
+                console.error('Error:', error);
+            });
+    }
+
+    // Cargar colores de pintura
+    cargarDatos('http://localhost:3000/colores_pintura', 'coloresSelect', 'Seleccione un color', 'Ocurrió un error al cargar los colores', 'Nombre');
+
+    // Cargar estados de cotización
+    cargarDatos('http://localhost:3000/estados_cotizaciones', 'estadosSelect', 'Seleccione un estado', 'Ocurrió un error al cargar los estados', 'Estado');
+});
+
 // Obtener categorías trabajos
 addEventListener('DOMContentLoaded', function () {
     fetch('http://localhost:3000/categorias')
@@ -324,4 +369,130 @@ document.addEventListener('DOMContentLoaded', function () {
             distritosSelect.innerHTML = '<option value="">Ocurrió un error al obtener los datos</option>';
             console.error('Error:', error);
         });
+});
+
+document.getElementById('btnCotizaciones').addEventListener('click', function() {
+    fetch('http://localhost:3000/cotizaciones')
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok: ' + response.statusText);
+            }
+            return response.json();
+        })
+        .then(data => {
+            const resultadoCotizaciones = document.getElementById('resultadoCotizaciones');
+            resultadoCotizaciones.innerHTML = '';  // Limpiar el contenido
+
+            data.forEach(cotizacion => {
+                const div = document.createElement('div');
+                div.innerHTML = `
+                    <p><strong>Tipo de Cotización:</strong> ${cotizacion.TipoCotizacion}</p>
+                    <p><strong>Cliente:</strong> ${cotizacion.PrimerNombre} ${cotizacion.SegundoNombre} ${cotizacion.PrimerApellido} ${cotizacion.SegundoApellido}</p>
+                    ${cotizacion.TipoCotizacion === 'Determinada' ? `
+                      <p><strong>Categoría:</strong> ${cotizacion.Categoria}</p>
+                      <p><strong>Estilo:</strong> ${cotizacion.Estilo}</p>
+                      <p><strong>Dimensiones:</strong> ${cotizacion.Ancho} x ${cotizacion.Largo}</p>
+                      <p><strong>Ubicación:</strong> ${cotizacion.Ubicacion}</p>
+                      <p><strong>Precio:</strong> ${cotizacion.Costo}</p>
+                    ` : `
+                      <p><strong>Descripción:</strong> ${cotizacion.Descripcion}</p>
+                      <p><strong>Precio:</strong> ${cotizacion.Costo}</p>
+                    `}
+                    <hr>
+                `;
+                resultadoCotizaciones.appendChild(div);
+            });
+        })
+        .catch(error => {
+            alert('Error al obtener las cotizaciones');
+            console.error('Error:', error);
+        });
+});
+// Obtener cotizaciones por correo electrónico
+document.getElementById('consultarCotizaciones').addEventListener('submit', function(event) {
+    event.preventDefault();
+
+    const correo = document.getElementById('consultarCorreo').value;
+
+    fetch(`http://localhost:3000/cotizacion?correo=${correo}`)
+        .then(response => response.json())
+        .then(data => {
+            const resultDiv = document.getElementById('resultadoCotizaciones');
+            resultDiv.innerHTML = '';
+
+            if (data.error) {
+                resultDiv.textContent = data.error;
+                return;
+            }
+
+            resultDiv.innerHTML += '<h3>Cotizaciones Determinadas</h3>';
+            data.cotizacionesDeterminadas.forEach(cot => {
+                resultDiv.innerHTML += `
+                    <p>
+                        Categoría: ${cot.Categoria}<br>
+                        Estilo: ${cot.Estilo}<br>
+                        Ancho: ${cot.Ancho}<br>
+                        Largo: ${cot.Largo}<br>
+                        Costo: ${cot.Costo}<br>
+                        Ubicación: ${cot.Ubicacion}<br>
+                        Fecha: ${cot.FechaRecibido}
+                    </p>`;
+            });
+
+            resultDiv.innerHTML += '<h3>Cotizaciones Especiales</h3>';
+            data.cotizacionesEspeciales.forEach(cot => {
+                resultDiv.innerHTML += `
+                    <p>
+                        Nombre: ${cot.Nombre}<br>
+                        Descripción: ${cot.Descripcion}<br>
+                        Fecha: ${cot.FechaRecibido}
+                    </p>`;
+            });
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Error al consultar las cotizaciones');
+        });
+});
+// Consultar estadísticas generales
+function consultarEstadisticasGenerales() {
+    fetch('http://localhost:3000/estadisticas/cotizaciones/generales')
+        .then(response => response.json())
+        .then(data => {
+            const resultDiv = document.getElementById('resultadoEstadisticasGenerales');
+            resultDiv.innerHTML = JSON.stringify(data, null, 2);
+        })
+        .catch(error => console.error('Error:', error));
+}
+
+// Consultar estadísticas por cliente
+function consultarEstadisticasPorCliente() {
+    fetch('http://localhost:3000/estadisticas/cotizaciones/por_cliente')
+        .then(response => response.json())
+        .then(data => {
+            const resultDiv = document.getElementById('resultadoEstadisticasPorCliente');
+            resultDiv.innerHTML = JSON.stringify(data, null, 2);
+        })
+        .catch(error => console.error('Error:', error));
+}
+document.getElementById('formCambiarEstado').addEventListener('submit', function(event) {
+    event.preventDefault();
+
+    const idCotizacion = document.getElementById('idCotizacion').value;
+    const tipoCotizacion = document.getElementById('tipoCotizacion').value;
+    const nuevoEstado = document.getElementById('nuevoEstado').value;
+
+    fetch('http://localhost:3000/cotizacion/estado', {
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ idCotizacion, tipoCotizacion, nuevoEstado })
+    })
+    .then(response => response.json())
+    .then(data => {
+        const resultDiv = document.getElementById('resultadoCambioEstado');
+        resultDiv.textContent = data.message || data.error;
+    })
+    .catch(error => console.error('Error:', error));
 });

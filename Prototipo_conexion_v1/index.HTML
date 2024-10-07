@@ -42,6 +42,20 @@
   <div id="resultadoIniciarSesion"></div>
 
   <!------------- Cotización Determinada ------------->
+  <div id="selectColores">
+    <h2>Selecciona un color de pintura</h2>
+      <select id="coloresSelect">
+        <option value="">Cargando colores...</option>
+      </select>
+  </div>
+
+  <div id="selectEstados">
+      <h2>Selecciona un estado de cotización</h2>
+      <select id="estadosSelect">
+        <option value="">Cargando estados...</option>
+      </select>
+  </div>
+
   <div id="selectEstilos">
     <h2>Selecciona un estilo</h2>
     <select id="estilosSelect">
@@ -83,7 +97,47 @@
       <option value="">Cargando distritos...</option>
     </select>
   </div>
+  <h3>Obtener cotizaciones</h3>
+  <button id="btnCotizaciones">Ver Cotizaciones</button>
+  <div id="resultadoCotizaciones"></div>
 
+  <h2>Consultar Cotizaciones</h2>
+<form id="consultarCotizaciones">
+    <label for="correo">Correo Electrónico:</label>
+    <input type="email" id="consultarCorreo" name="correo" required>
+    <button type="submit">Consultar</button>
+</form>
+<div id="resultadoCotizaciones"></div>
+<!------------- Estadísticas ------------->
+<h3>Estadísticas Generales</h3>
+<button onclick="consultarEstadisticasGenerales()">Consultar estadísticas generales</button>
+<div id="resultadoEstadisticasGenerales"></div>
+
+<h3>Estadísticas por Cliente</h3>
+<button onclick="consultarEstadisticasPorCliente()">Consultar estadísticas por cliente</button>
+<div id="resultadoEstadisticasPorCliente"></div>
+<h3>Cambiar estado de una cotización</h3>
+<form id="formCambiarEstado">
+    <label for="idCotizacion">ID Cotización:</label>
+    <input type="text" id="idCotizacion" required>
+    
+    <label for="tipoCotizacion">Tipo de Cotización:</label>
+    <select id="tipoCotizacion" required>
+        <option value="determinada">Determinada</option>
+        <option value="especial">Especial</option>
+    </select>
+    
+    <label for="nuevoEstado">Nuevo Estado:</label>
+    <select id="nuevoEstado" required>
+        <option value="Pagado">Pagado</option>
+        <option value="Pendiente">Pendiente</option>
+        <option value="En proceso">En proceso</option>
+        <option value="Cotizado">Cotizado</option>
+    </select>
+    
+    <button type="submit">Cambiar Estado</button>
+</form>
+<div id="resultadoCambioEstado"></div>
   <script src="app.js"></script>
 </body>
 </html>
