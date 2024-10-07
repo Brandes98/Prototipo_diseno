@@ -161,6 +161,51 @@ document.addEventListener('DOMContentLoaded', function () {
         });
 });
 
+document.addEventListener('DOMContentLoaded', function () {
+    // Función genérica para cargar datos en un select
+    function cargarDatos(url, selectId, mensajeCargando, mensajeError, campo) {
+        // Realizar la petición
+        fetch(url)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok: ' + response.statusText);
+                }
+                return response.json();
+            })
+            .then(data => {
+                const select = document.getElementById(selectId);
+
+                // Limpiar las opciones existentes (excepto la primera)
+                select.innerHTML = `<option value="">${mensajeCargando}</option>`;
+
+                // Verificar si hay datos
+                if (data.length > 0) {
+                    data.forEach(item => {
+                        const option = document.createElement('option');
+                        option.value = item[campo];  // Valor de la opción
+                        option.textContent = item[campo];  // Texto de la opción
+                        select.appendChild(option);
+                    });
+                } else {
+                    const option = document.createElement('option');
+                    option.textContent = 'No hay opciones disponibles';
+                    select.appendChild(option);
+                }
+            })
+            .catch(error => {
+                const select = document.getElementById(selectId);
+                select.innerHTML = `<option value="">${mensajeError}</option>`;
+                console.error('Error:', error);
+            });
+    }
+
+    // Cargar colores de pintura
+    cargarDatos('http://localhost:3000/colores_pintura', 'coloresSelect', 'Seleccione un color', 'Ocurrió un error al cargar los colores', 'Nombre');
+
+    // Cargar estados de cotización
+    cargarDatos('http://localhost:3000/estados_cotizaciones', 'estadosSelect', 'Seleccione un estado', 'Ocurrió un error al cargar los estados', 'Estado');
+});
+
 // Obtener categorías trabajos
 addEventListener('DOMContentLoaded', function () {
     fetch('http://localhost:3000/categorias')

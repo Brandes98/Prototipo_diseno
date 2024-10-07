@@ -55,6 +55,18 @@ CREATE TABLE `Estilo` (
   PRIMARY KEY (`IDEstilo`)
 );
 
+-- estado de cotizacion --
+CREATE TABLE `EstadoCotizacion` (
+    `IDEstadoCotizacion` INT AUTO_INCREMENT PRIMARY KEY NOT NULL,
+    `Estado` VARCHAR(20)
+);
+
+-- Colores de pinturas
+CREATE TABLE `ColorPintura` (
+    `IDColorPintura` INT AUTO_INCREMENT PRIMARY KEY NOT NULL,
+    `Nombre` VARCHAR(50)
+);
+
 CREATE TABLE `CotizacionEspecial` (
   `IDCotizacionEsp` INT(50),
   `IDCuenta` INT(10),
@@ -63,8 +75,12 @@ CREATE TABLE `CotizacionEspecial` (
   `FechaRecibido` DATETIME,
   `Traslado` BOOLEAN,
   `Costo` FLOAT(12,2),
+  `IDEstadoCotizacion` INT(10),
+  `IDColorPintura` INT(10),
   PRIMARY KEY (`IDCotizacionEsp`),
-  FOREIGN KEY (`IDCuenta`) REFERENCES `Cuenta`(`IDCuenta`)
+  FOREIGN KEY (`IDCuenta`) REFERENCES `Cuenta`(`IDCuenta`),
+  FOREIGN KEY (`IDEstadoCotizacion`) REFERENCES `EstadoCotizacion`(`IDEstadoCotizacion`),
+  FOREIGN KEY (`IDColorPintura`) REFERENCES `ColorPintura`(`IDColorPintura`)
 );
 
 CREATE TABLE `UnidadMedida` (
@@ -107,10 +123,14 @@ CREATE TABLE `CotizacionDeterminada` (
   `Ancho` FLOAT(12,2),
   `Largo` FLOAT(12,2),
   `Costo` FLOAT(22,2),
+  `IDEstadoCotizacion` INT(10),
+  `IDColorPintura` INT(10),
   PRIMARY KEY (`IDCotizacionDet`),
   FOREIGN KEY (`IDCuenta`) REFERENCES `Cuenta`(`IDTipoCuenta`),
   FOREIGN KEY (`IDTipoTrabajo`) REFERENCES `TipoTrabajo`(`IDTipoTrabajo`),
-  FOREIGN KEY (`IDEstilo`) REFERENCES `Estilo`(`IDEstilo`)
+  FOREIGN KEY (`IDEstilo`) REFERENCES `Estilo`(`IDEstilo`),
+  FOREIGN KEY (`IDEstadoCotizacion`) REFERENCES `EstadoCotizacion`(`IDEstadoCotizacion`),
+  FOREIGN KEY (`IDColorPintura`) REFERENCES `ColorPintura`(`IDColorPintura`)
 );
 
 CREATE TABLE `MaterialesPorTrabajoDeterminado` (
@@ -177,13 +197,7 @@ INSERT INTO TipoCuenta (TipoCuenta) VALUES
 INSERT INTO Cuenta (IDTipoCuenta, IDDistrito, PrimerNombre, SegundoNombre, PrimerApellido, SegundoApellido, CorreoElectronico, Clave) VALUES 
 (1, 1, 'Juan', 'Carlos', 'Gómez', 'Pérez', 'juan.gomez@example.com', 'pass123'),
 (2, 3, 'Ana', 'María', 'Rodríguez', 'Lopez', 'ana.rodriguez@example.com', 'securePass456');
-ALTER TABLE CotizacionDeterminada
-ADD COLUMN IDEstadoCotizacion INT,
-ADD CONSTRAINT FK_CotDet_Estado FOREIGN KEY (IDEstadoCotizacion) REFERENCES EstadoCotizacion(IDEstadoCotizacion) ;
 
-ALTER TABLE CotizacionEspecial
-ADD COLUMN IDEstadoCotizacion INT,
-ADD CONSTRAINT FK_CotEsp_Estado FOREIGN KEY (IDEstadoCotizacion) REFERENCES EstadoCotizacion(IDEstadoCotizacion);
 -- Tipo Cuenta --
 insert into tipocuenta(TipoCuenta) values ('Administrador');
 insert into tipocuenta(TipoCuenta) values ('Cliente');
@@ -261,13 +275,21 @@ INSERT INTO Estilo (Nombre) VALUES
 ('Moderno'),
 ('Clásico'),
 ('Colonial');
-INSERT INTO CotizacionEspecial (IDCuenta, Nombre, Descripcion, FechaRecibido, Traslado, Costo) VALUES 
-(1, 'Trabajo Especial 1', 'Descripción del trabajo especial 1', '2024-09-01 12:00:00', TRUE, 1500.00),
-(2, 'Trabajo Especial 2', 'Descripción del trabajo especial 2', '2024-09-05 14:00:00', FALSE, 2500.00);
+
+insert into EstadoCotizacion (Estado) values ('Pagado');
+insert into EstadoCotizacion (Estado) values ('Pendiente');
+insert into EstadoCotizacion (Estado) values ('En proceso');
+insert into EstadoCotizacion (Estado) values ('Cotizado');
+
+insert into ColorPintura (Nombre) values ('Gris'), ('Añejado');
+
+INSERT INTO CotizacionEspecial (IDCuenta, Nombre, Descripcion, FechaRecibido, Traslado, Costo, IDEstadoCotizacion, IDColorPintura) VALUES 
+(1, 'Trabajo Especial 1', 'Descripción del trabajo especial 1', '2024-09-01 12:00:00', TRUE, 1500.00, 1, 2),
+(2, 'Trabajo Especial 2', 'Descripción del trabajo especial 2', '2024-09-05 14:00:00', FALSE, 2500.00, 3, 2);
 
 INSERT INTO CotizacionDeterminada (IDCuenta, IDTipoTrabajo, IDEstilo, FechaRecibido, FechaEntregada, Traslado, Ancho, Largo, Costo) VALUES 
-(1, 1, 1, '2024-09-10 08:30:00', '2024-09-20 16:00:00', TRUE, 2.5, 1.5, 3000.00),
-(2, 2, 2, '2024-09-12 09:00:00', '2024-09-22 14:00:00', FALSE, 3.0, 2.0, 4500.00);
+(1, 1, 1, '2024-09-10 08:30:00', '2024-09-20 16:00:00', TRUE, 2.5, 1.5, 3000.00, 4, 1),
+(2, 2, 2, '2024-09-12 09:00:00', '2024-09-22 14:00:00', FALSE, 3.0, 2.0, 4500.00, 3, 2);
 
 INSERT INTO MaterialesPorTrabajoDeterminado (IDMaterial, IDCortizacionDet, Cantidad) VALUES 
 (1, 3, 5.0),
@@ -298,15 +320,3 @@ CREATE TABLE `MaterialesPorTrabajoEspecial` (
   FOREIGN KEY (`IDCortizacionEsp`) REFERENCES `CotizacionEspecial`(`IDCotizacionEsp`),
   FOREIGN KEY (`IDMaterial`) REFERENCES `MaterialTrabajo`(`IDMaterialTrabajo`)
 );
--- estado de cotizacion --
-create table `EstadoCotizacion`(
-`IDEstadoCotizacion` int auto_increment primary key not null,
-`Estado` varchar(20)
-);
-insert into EstadoCotizacion (Estado) values ('Pagado');
-insert into EstadoCotizacion (Estado) values ('Pendiente');
-insert into EstadoCotizacion (Estado) values ('En proceso');
-insert into EstadoCotizacion (Estado) values ('Cotizado');
-
-
-

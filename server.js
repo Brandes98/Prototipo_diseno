@@ -208,6 +208,29 @@ app.get('/categorias', (req, res) => {
   });
 });
 
+// Obtener colores pintura
+app.get('/colores_pintura', (req, res) => {
+  const query = 'SELECT Nombre FROM ColorPintura;';
+
+  db.query(query, (err, results) => {
+    if (err) {
+      return res.status(500).json({ error: 'Error al obtener los datos de la base de datos' });
+    }
+    res.json(results);  // Enviar los datos obtenidos como respuesta en formato JSON
+  });
+});
+
+// Obtener estados de cotización
+app.get('/estados_cotizaciones', (req, res) => {
+  const query = 'SELECT Estado FROM EstadoCotizacion;'; // Ajusta esta consulta según tu esquema de base de datos
+  db.query(query, (err, results) => {
+      if (err) {
+          return res.status(500).json({ error: 'Error al obtener los datos de la base de datos' });
+      }
+      res.json(results);
+  });
+});
+
 // Obtener paises
 app.get('/paises', (req, res) => {
   const query = 'SELECT Pais FROM Pais;'; // Ajusta esta consulta según tu esquema de base de datos
@@ -218,6 +241,7 @@ app.get('/paises', (req, res) => {
       res.json(results);
   });
 });
+
 
 // Obtener provincias
 app.get('/provincias', (req, res) => {
