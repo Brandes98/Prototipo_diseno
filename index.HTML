@@ -124,6 +124,97 @@
     <button type="submit">Cambiar Estado</button>
 </form>
 <div id="resultadoCambioEstado"></div>
+<!-- Selector para tipo de material -->
+<h3>Selecciona un tipo de material</h3>
+<select id="tipoMaterialSelect">
+  <option value="">Selecciona un tipo de material</option>
+  <option value="1">Tipo Material 1</option>
+  <option value="2">Tipo Material 2</option>
+  <option value="10">Tipo Material 10</option>
+  <!-- Agrega aquí más opciones según los tipos de materiales disponibles -->
+</select>
+<button onclick="obtenerMateriales()">Consultar Materiales</button>
+
+<!-- Mostrar resultados de materiales -->
+<h3>Resultado de Materiales</h3>
+<div id="resultadoMateriales"></div>
+<h2>Insertar Cotización Determinada</h2>
+<form id="cotizacionDeterminadaForm">
+    <label for="IDCuenta">ID Cuenta:</label>
+    <input type="text" id="IDCuenta" required><br>
+
+    <label for="IDTipoTrabajo">ID Tipo Trabajo:</label>
+    <input type="text" id="IDTipoTrabajo" required><br>
+
+    <label for="IDEstilo">ID Estilo:</label>
+    <input type="text" id="IDEstilo" required><br>
+
+    <label for="Ancho">Ancho:</label>
+    <input type="number" id="Ancho" required><br>
+
+    <label for="Largo">Largo:</label>
+    <input type="number" id="Largo" required><br>
+
+    <label for="Traslado">Traslado (1 = Con Traslado, 0 = Sin Traslado):</label>
+    <input type="number" id="Traslado" required><br>
+
+    <label for="Costo">Costo:</label>
+    <input type="number" id="Costo" required><br>
+
+    <label for="IDEstadoCotizacion">ID Estado Cotización:</label>
+    <input type="text" id="IDEstadoCotizacion" required><br>
+
+    <button type="button" onclick="insertarCotizacionDeterminada()">Insertar Cotización Determinada</button>
+</form>
+<h2>Insertar Cotización Especial</h2>
+<form id="cotizacionEspecialForm">
+    <label for="IDCuentaEspecial">ID Cuenta:</label>
+    <input type="text" id="IDCuentaEspecial" required><br>
+
+    <label for="NombreEspecial">Nombre Cotización:</label>
+    <input type="text" id="NombreEspecial" required><br>
+
+    <label for="Descripcion">Descripción:</label>
+    <input type="text" id="Descripcion" required><br>
+
+    <label for="TrasladoEspecial">Traslado (1 = Con Traslado, 0 = Sin Traslado):</label>
+    <input type="number" id="TrasladoEspecial" required><br>
+
+    <label for="CostoEspecial">Costo:</label>
+    <input type="number" id="CostoEspecial" required><br>
+
+    <label for="IDEstadoCotizacionEspecial">ID Estado Cotización:</label>
+    <input type="text" id="IDEstadoCotizacionEspecial" required><br>
+
+    <button type="button" onclick="insertarCotizacionEspecial()">Insertar Cotización Especial</button>
+</form>
+<h2>Obtener comentarios con estado TRUE</h2>
+  <button onclick="obtenerComentariosTrue()">Ver Comentarios True</button>
+  <div id="resultadoComentariosTrue"></div>
+
+  <h2>Obtener comentarios con estado FALSE</h2>
+  <button onclick="obtenerComentariosFalse()">Ver Comentarios False</button>
+  <div id="resultadoComentariosFalse"></div>
+
+<h2>Obtener Estadísticas por IDCuenta</h2>
+<form id="estadisticasForm">
+    <label for="idCuenta">ID Cuenta:</label>
+    <input type="text" id="idCuenta" required>
+    <button type="button" onclick="obtenerEstadisticasPorCuenta()">Consultar Estadísticas</button>
+</form>
+<div id="resultadoEstadisticas"></div>
+<h3>Descargar Cotizaciones en PDF</h3>
+<button onclick="descargarCotizaciones()">Descargar PDF</button>
+
+<h2>Consultar Cotizaciones por Usuario</h2>
+<form id="consultarCotizacionesPorUsuarioForm">
+    <label for="idCuentaUsuario">ID Cuenta:</label>
+    <input type="text" id="idCuentaUsuario" required>
+    <button type="button" onclick="obtenerCotizacionesPorUsuario()">Consultar</button>
+</form>
+<div id="resultadoCotizacionesPorUsuario"></div>
+
+
   <script src="app.js"></script>
 </body>
 </html>

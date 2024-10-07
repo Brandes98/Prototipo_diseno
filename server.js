@@ -639,6 +639,326 @@ app.put('/cotizacion/estado', (req, res) => {
   });
 });
 
+// Obtener los materiales por tipo de material
+app.get('/materiales/:idTipoMaterial', (req, res) => {
+  const idTipoMaterial = req.params.idTipoMaterial;
+
+  const query = `
+    SELECT mt.nombre
+    FROM materialtrabajo mt
+    JOIN tipomaterial tp ON mt.IDTipoMaterial = tp.IDTipoMaterial
+    WHERE mt.IDTipoMaterial = ?;
+  `;
+
+  db.query(query, [idTipoMaterial], (err, results) => {
+    if (err) {
+      return res.status(500).json({ error: 'Error al obtener los materiales' });
+    }
+    res.json(results);  // Enviar los resultados en formato JSON
+  });
+});
+
+// Inserción de cotización determinada
+app.post('/cotizacion/determinada', (req, res) => {
+  const {
+      IDCuenta, IDTipoTrabajo, IDEstilo, Ancho, Largo, Traslado, Costo, IDEstadoCotizacion
+  } = req.body;
+
+  if (!IDCuenta || !IDTipoTrabajo || !IDEstilo || !Ancho || !Largo || !Traslado || !Costo || !IDEstadoCotizacion) {
+      return res.status(400).json({ error: 'Todos los campos son requeridos' });
+  }
+
+  const query = `
+      INSERT INTO CotizacionDeterminada (IDCuenta, IDTipoTrabajo, IDEstilo, Ancho, Largo, Traslado, Costo, IDEstadoCotizacion, FechaRecibido)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, NOW());
+  `;
+
+  db.query(query, [IDCuenta, IDTipoTrabajo, IDEstilo, Ancho, Largo, Traslado, Costo, IDEstadoCotizacion], (err, result) => {
+      if (err) {
+          console.error('Error al insertar cotización determinada:', err);
+          return res.status(500).json({ error: 'Error al insertar cotización determinada' });
+      }
+
+      res.json({ message: 'Cotización determinada insertada con éxito', insertId: result.insertId });
+  });
+});
+
+// Inserción de cotización especial
+app.post('/cotizacion/especial', (req, res) => {
+  const {
+      IDCuenta, Nombre, Descripcion, Traslado, Costo, IDEstadoCotizacion
+  } = req.body;
+
+  if (!IDCuenta || !Nombre || !Descripcion || !Traslado || !Costo || !IDEstadoCotizacion) {
+      return res.status(400).json({ error: 'Todos los campos son requeridos' });
+  }
+
+  const query = `
+      INSERT INTO CotizacionEspecial (IDCuenta, Nombre, Descripcion, Traslado, Costo, IDEstadoCotizacion, FechaRecibido)
+      VALUES (?, ?, ?, ?, ?, ?, NOW());
+  `;
+
+  db.query(query, [IDCuenta, Nombre, Descripcion, Traslado, Costo, IDEstadoCotizacion], (err, result) => {
+      if (err) {
+          console.error('Error al insertar cotización especial:', err);
+          return res.status(500).json({ error: 'Error al insertar cotización especial' });
+      }
+
+      res.json({ message: 'Cotización especial insertada con éxito', insertId: result.insertId });
+  });
+});
+
+// Obtener comentarios con estado TRUE
+app.get('/comentarios/true', (req, res) => {
+  const query = 'SELECT IDComentario, IDCuenta, Comentario, Estado FROM Comentario WHERE Estado = TRUE;';
+  db.query(query, (err, results) => {
+    if (err) {
+      return res.status(500).json({ error: 'Error al obtener los comentarios con estado TRUE' });
+    }
+    res.json(results);
+  });
+});
+
+// Obtener comentarios con estado FALSE
+app.get('/comentarios/false', (req, res) => {
+  const query = 'SELECT IDComentario, IDCuenta, Comentario, Estado FROM Comentario WHERE Estado = FALSE;';
+  db.query(query, (err, results) => {
+    if (err) {
+      return res.status(500).json({ error: 'Error al obtener los comentarios con estado FALSE' });
+    }
+    res.json(results);
+  });
+});
+
+// Obtener estadísticas de cotizaciones por IDCuenta
+app.get('/estadisticas/cotizaciones/:idCuenta', (req, res) => {
+  const idCuenta = req.params.idCuenta;
+  
+  const query = `
+  SELECT 
+      C.PrimerNombre,
+      C.PrimerApellido,
+      'Categoria' AS Aspecto,
+      TT.Nombre AS Valor,
+      COUNT(*) AS Cantidad
+  FROM 
+      CotizacionDeterminada CD
+  JOIN 
+      TipoTrabajo TT ON CD.IDTipoTrabajo = TT.IDTipoTrabajo
+  JOIN 
+      Cuenta C ON CD.IDCuenta = C.IDCuenta
+  WHERE 
+      C.IDCuenta = ?
+  GROUP BY 
+      C.IDCuenta, TT.Nombre
+
+  UNION ALL
+
+  SELECT 
+      C.PrimerNombre,
+      C.PrimerApellido,
+      'Estilo' AS Aspecto,
+      E.Nombre AS Valor,
+      COUNT(*) AS Cantidad
+  FROM 
+      CotizacionDeterminada CD
+  JOIN 
+      Estilo E ON CD.IDEstilo = E.IDEstilo
+  JOIN 
+      Cuenta C ON CD.IDCuenta = C.IDCuenta
+  WHERE 
+      C.IDCuenta = ?
+  GROUP BY 
+      C.IDCuenta, E.Nombre
+
+  UNION ALL
+
+  SELECT 
+      C.PrimerNombre,
+      C.PrimerApellido,
+      'Traslado' AS Aspecto,
+      IF(CD.Traslado = 1, 'Con Traslado', 'Sin Traslado') AS Valor,
+      COUNT(*) AS Cantidad
+  FROM 
+      CotizacionDeterminada CD
+  JOIN 
+      Cuenta C ON CD.IDCuenta = C.IDCuenta
+  WHERE 
+      C.IDCuenta = ?
+  GROUP BY 
+      C.IDCuenta, CD.Traslado;
+  `;
+
+  db.query(query, [idCuenta, idCuenta, idCuenta], (err, results) => {
+      if (err) {
+          return res.status(500).json({ error: 'Error al obtener las estadísticas de cotizaciones' });
+      }
+      res.json(results);
+  });
+});
+
+const PDFDocument = require('pdfkit');
+const fs = require('fs');
+
+// Endpoint para descargar cotizaciones determinadas y/o especiales por IDCuenta en PDF
+app.get('/descargar/cotizaciones/:idCuenta', (req, res) => {
+  const idCuenta = req.params.idCuenta;
+
+  // Consulta para obtener cotizaciones determinadas
+  const queryDeterminadas = `
+    SELECT 
+      CD.IDCotizacionDet AS IDCotizacion,
+      C.PrimerNombre,
+      C.PrimerApellido,
+      TT.Nombre AS Categoria,
+      E.Nombre AS Estilo,
+      CD.Ancho,
+      CD.Largo,
+      CD.Costo,
+      CD.FechaRecibido
+    FROM CotizacionDeterminada CD
+    JOIN Cuenta C ON CD.IDCuenta = C.IDCuenta
+    JOIN TipoTrabajo TT ON CD.IDTipoTrabajo = TT.IDTipoTrabajo
+    JOIN Estilo E ON CD.IDEstilo = E.IDEstilo
+    WHERE CD.IDCuenta = ?;
+  `;
+
+  // Consulta para obtener cotizaciones especiales
+  const queryEspeciales = `
+    SELECT 
+      CE.IDCotizacionEsp AS IDCotizacion,
+      C.PrimerNombre,
+      C.PrimerApellido,
+      CE.Nombre AS NombreEspecial,
+      CE.Descripcion,
+      CE.Costo,
+      CE.FechaRecibido
+    FROM CotizacionEspecial CE
+    JOIN Cuenta C ON CE.IDCuenta = C.IDCuenta
+    WHERE CE.IDCuenta = ?;
+  `;
+
+  // Realizar las dos consultas
+  db.query(queryDeterminadas, [idCuenta], (err, cotizacionesDeterminadas) => {
+    if (err) {
+      return res.status(500).json({ error: 'Error al obtener las cotizaciones determinadas' });
+    }
+
+    db.query(queryEspeciales, [idCuenta], (err, cotizacionesEspeciales) => {
+      if (err) {
+        return res.status(500).json({ error: 'Error al obtener las cotizaciones especiales' });
+      }
+
+      // Crear un nuevo documento PDF
+      const doc = new PDFDocument();
+      
+      // Configurar la respuesta HTTP para el PDF
+      res.setHeader('Content-Type', 'application/pdf');
+      res.setHeader('Content-Disposition', 'attachment; filename=cotizaciones.pdf');
+
+      // Enviar el PDF como respuesta directamente
+      doc.pipe(res);
+
+      // Escribir contenido en el PDF
+      doc.fontSize(20).text('Cotizaciones Determinadas', { underline: true });
+
+      cotizacionesDeterminadas.forEach(cot => {
+        doc
+          .fontSize(12)
+          .text(`ID Cotización: ${cot.IDCotizacion}`)
+          .text(`Cliente: ${cot.PrimerNombre} ${cot.PrimerApellido}`)
+          .text(`Categoría: ${cot.Categoria}`)
+          .text(`Estilo: ${cot.Estilo}`)
+          .text(`Ancho: ${cot.Ancho}`)
+          .text(`Largo: ${cot.Largo}`)
+          .text(`Costo: ${cot.Costo}`)
+          .text(`Fecha Recibido: ${cot.FechaRecibido}`)
+          .moveDown();
+      });
+
+      doc.fontSize(20).text('Cotizaciones Especiales', { underline: true });
+
+      cotizacionesEspeciales.forEach(cot => {
+        doc
+          .fontSize(12)
+          .text(`ID Cotización: ${cot.IDCotizacion}`)
+          .text(`Cliente: ${cot.PrimerNombre} ${cot.PrimerApellido}`)
+          .text(`Nombre Especial: ${cot.NombreEspecial}`)
+          .text(`Descripción: ${cot.Descripcion}`)
+          .text(`Costo: ${cot.Costo}`)
+          .text(`Fecha Recibido: ${cot.FechaRecibido}`)
+          .moveDown();
+      });
+
+      // Finalizar el documento PDF
+      doc.end();
+    });
+  });
+});
+
+// Obtener cotizaciones por IDCuenta
+app.get('/cotizaciones/por_usuario/:IDCuenta', (req, res) => {
+  const idCuenta = req.params.IDCuenta;  // Asegurarse que IDCuenta esté bien en el parámetro.
+
+  // Consulta para obtener cotizaciones determinadas
+  const queryDeterminadas = `
+    SELECT 
+      CD.IDCotizacionDet AS IDCotizacion,
+      C.PrimerNombre,
+      C.PrimerApellido,
+      TT.Nombre AS Categoria,
+      E.Nombre AS Estilo,
+      CD.Ancho,
+      CD.Largo,
+      CD.Costo,
+      CD.FechaRecibido
+    FROM CotizacionDeterminada CD
+    JOIN Cuenta C ON CD.IDCuenta = C.IDCuenta
+    JOIN TipoTrabajo TT ON CD.IDTipoTrabajo = TT.IDTipoTrabajo
+    JOIN Estilo E ON CD.IDEstilo = E.IDEstilo
+    WHERE CD.IDCuenta = ?;
+  `;
+
+  // Consulta para obtener cotizaciones especiales
+  const queryEspeciales = `
+    SELECT 
+      CE.IDCotizacionEsp AS IDCotizacion,
+      C.PrimerNombre,
+      C.PrimerApellido,
+      CE.Nombre AS NombreEspecial,
+      CE.Descripcion,
+      CE.Costo,
+      CE.FechaRecibido
+    FROM CotizacionEspecial CE
+    JOIN Cuenta C ON CE.IDCuenta = C.IDCuenta
+    WHERE CE.IDCuenta = ?;
+  `;
+
+  // Realizar la primera consulta para cotizaciones determinadas
+  db.query(queryDeterminadas, [idCuenta], (err, cotizacionesDeterminadas) => {
+    if (err) {
+      return res.status(500).json({ error: 'Error al obtener las cotizaciones determinadas' });
+    }
+
+    // Realizar la segunda consulta para cotizaciones especiales
+    db.query(queryEspeciales, [idCuenta], (err, cotizacionesEspeciales) => {
+      if (err) {
+        return res.status(500).json({ error: 'Error al obtener las cotizaciones especiales' });
+      }
+
+      // Combinar los resultados de ambas consultas
+      const results = {
+        cotizacionesDeterminadas,
+        cotizacionesEspeciales
+      };
+
+      // Devolver los resultados combinados como respuesta
+      res.json(results);
+    });
+  });
+});
+
+
 // Servidor
 app.listen(3000, () => {
   console.log('Servidor corriendo en el puerto 3000');

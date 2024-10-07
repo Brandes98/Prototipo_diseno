@@ -451,3 +451,238 @@ document.getElementById('formCambiarEstado').addEventListener('submit', function
     })
     .catch(error => console.error('Error:', error));
 });
+
+// Obtener materiales por tipo de material
+function obtenerMateriales() {
+    const idTipoMaterial = document.getElementById('tipoMaterialSelect').value; // Obtenemos el valor seleccionado
+
+    if (!idTipoMaterial) {
+        alert('Por favor, selecciona un tipo de material');
+        return;
+    }
+
+    // Realizar la petición al endpoint del servidor
+    fetch(`http://localhost:3000/materiales/${idTipoMaterial}`)
+        .then(response => response.json())
+        .then(data => {
+            const resultadoMateriales = document.getElementById('resultadoMateriales');
+            resultadoMateriales.innerHTML = '';  // Limpiar el contenido
+
+            if (data.length === 0) {
+                resultadoMateriales.innerHTML = '<p>No se encontraron materiales para este tipo de material</p>';
+                return;
+            }
+
+            data.forEach(material => {
+                const div = document.createElement('div');
+                div.innerHTML = `<p>Material: ${material.nombre}</p>`;
+                resultadoMateriales.appendChild(div);
+            });
+        })
+        .catch(error => {
+            alert('Error al obtener los materiales');
+            console.error('Error:', error);
+        });
+}
+// Inserción de cotización determinada
+function insertarCotizacionDeterminada() {
+    const cotizacion = {
+        IDCuenta: document.getElementById('IDCuenta').value,
+        IDTipoTrabajo: document.getElementById('IDTipoTrabajo').value,
+        IDEstilo: document.getElementById('IDEstilo').value,
+        Ancho: document.getElementById('Ancho').value,
+        Largo: document.getElementById('Largo').value,
+        Traslado: document.getElementById('Traslado').value,
+        Costo: document.getElementById('Costo').value,
+        IDEstadoCotizacion: document.getElementById('IDEstadoCotizacion').value
+    };
+
+    fetch('http://localhost:3000/cotizacion/determinada', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(cotizacion)
+    })
+    .then(response => response.json())
+    .then(data => {
+        alert('Cotización determinada insertada con éxito');
+        console.log(data);
+    })
+    .catch(error => {
+        alert('Error al insertar cotización determinada');
+        console.error('Error:', error);
+    });
+}
+
+// Inserción de cotización especial
+function insertarCotizacionEspecial() {
+    const cotizacion = {
+        IDCuenta: document.getElementById('IDCuentaEspecial').value,
+        Nombre: document.getElementById('NombreEspecial').value,
+        Descripcion: document.getElementById('Descripcion').value,
+        Traslado: document.getElementById('TrasladoEspecial').value,
+        Costo: document.getElementById('CostoEspecial').value,
+        IDEstadoCotizacion: document.getElementById('IDEstadoCotizacionEspecial').value
+    };
+
+    fetch('http://localhost:3000/cotizacion/especial', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(cotizacion)
+    })
+    .then(response => response.json())
+    .then(data => {
+        alert('Cotización especial insertada con éxito');
+        console.log(data);
+    })
+    .catch(error => {
+        alert('Error al insertar cotización especial');
+        console.error('Error:', error);
+    });
+}
+
+// Obtener comentarios con estado TRUE
+function obtenerComentariosTrue() {
+    fetch('http://localhost:3000/comentarios/true')
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Error al obtener los comentarios con estado TRUE');
+            }
+            return response.json();
+        })
+        .then(data => {
+            const resultDiv = document.getElementById('resultadoComentariosTrue');
+            resultDiv.innerHTML = '';  // Limpiar el contenido
+            data.forEach(comentario => {
+                const p = document.createElement('p');
+                p.textContent = `IDComentario: ${comentario.IDComentario}, Comentario: ${comentario.Comentario}`;
+                resultDiv.appendChild(p);
+            });
+        })
+        .catch(error => console.error('Error:', error));
+}
+
+// Obtener comentarios con estado FALSE
+function obtenerComentariosFalse() {
+    fetch('http://localhost:3000/comentarios/false')
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Error al obtener los comentarios con estado FALSE');
+            }
+            return response.json();
+        })
+        .then(data => {
+            const resultDiv = document.getElementById('resultadoComentariosFalse');
+            resultDiv.innerHTML = '';  // Limpiar el contenido
+            data.forEach(comentario => {
+                const p = document.createElement('p');
+                p.textContent = `IDComentario: ${comentario.IDComentario}, Comentario: ${comentario.Comentario}`;
+                resultDiv.appendChild(p);
+            });
+        })
+        .catch(error => console.error('Error:', error));
+}
+// Obtener estadísticas por IDCuenta
+function obtenerEstadisticasPorCuenta() {
+    const idCuenta = document.getElementById('idCuenta').value; // Obtener el IDCuenta desde un campo de entrada
+
+    if (!idCuenta) {
+        alert('Por favor, ingresa un ID de cuenta');
+        return;
+    }
+
+    fetch(`http://localhost:3000/estadisticas/cotizaciones/${idCuenta}`)
+        .then(response => response.json())
+        .then(data => {
+            const resultadoEstadisticas = document.getElementById('resultadoEstadisticas');
+            resultadoEstadisticas.innerHTML = '';  // Limpiar el contenido
+
+            if (data.length === 0) {
+                resultadoEstadisticas.innerHTML = '<p>No se encontraron estadísticas para esta cuenta</p>';
+                return;
+            }
+
+            data.forEach(estadistica => {
+                const div = document.createElement('div');
+                div.innerHTML = `<p>${estadistica.Aspecto}: ${estadistica.Valor} (${estadistica.Cantidad})</p>`;
+                resultadoEstadisticas.appendChild(div);
+            });
+        })
+        .catch(error => {
+            alert('Error al obtener las estadísticas');
+            console.error('Error:', error);
+        });
+}
+function descargarCotizaciones() {
+    const idCuenta = prompt("Ingresa el ID de la cuenta:");
+  
+    if (!idCuenta) {
+      alert('ID de cuenta es requerido');
+      return;
+    }
+  
+    // Redirigir al servidor para descargar el archivo PDF
+    window.location.href = `http://localhost:3000/descargar/cotizaciones/${idCuenta}`;
+  }
+  
+  // Obtener cotizaciones por IDCuenta
+// Obtener cotizaciones por IDCuenta (determinadas y especiales)
+function obtenerCotizacionesPorUsuario() {
+    const idCuenta = document.getElementById('idCuentaUsuario').value;
+
+    if (!idCuenta) {
+        alert('Por favor, ingresa un ID de Cuenta válido.');
+        return;
+    }
+
+    fetch(`http://localhost:3000/cotizaciones/por_usuario/${idCuenta}`)
+        .then(response => response.json())
+        .then(data => {
+            const resultDiv = document.getElementById('resultadoCotizacionesPorUsuario');
+            resultDiv.innerHTML = '';  // Limpiar el contenido
+
+            if (!data || (data.cotizacionesDeterminadas.length === 0 && data.cotizacionesEspeciales.length === 0)) {
+                resultDiv.innerHTML = '<p>No se encontraron cotizaciones para este usuario.</p>';
+                return;
+            }
+
+            // Mostrar cotizaciones determinadas
+            if (data.cotizacionesDeterminadas.length > 0) {
+                resultDiv.innerHTML += '<h3>Cotizaciones Determinadas</h3>';
+                data.cotizacionesDeterminadas.forEach(cotizacion => {
+                    resultDiv.innerHTML += `
+                        <p>
+                            ID: ${cotizacion.IDCotizacion}<br>
+                            Cliente: ${cotizacion.PrimerNombre} ${cotizacion.PrimerApellido}<br>
+                            Categoría: ${cotizacion.Categoria}<br>
+                            Estilo: ${cotizacion.Estilo}<br>
+                            Dimensiones: ${cotizacion.Ancho} x ${cotizacion.Largo}<br>
+                            Costo: ${cotizacion.Costo}<br>
+                            Fecha: ${cotizacion.FechaRecibido}
+                        </p><hr>`;
+                });
+            }
+
+            // Mostrar cotizaciones especiales
+            if (data.cotizacionesEspeciales.length > 0) {
+                resultDiv.innerHTML += '<h3>Cotizaciones Especiales</h3>';
+                data.cotizacionesEspeciales.forEach(cotizacion => {
+                    resultDiv.innerHTML += `
+                        <p>
+                            ID: ${cotizacion.IDCotizacion}<br>
+                            Cliente: ${cotizacion.PrimerNombre} ${cotizacion.PrimerApellido}<br>
+                            Nombre: ${cotizacion.NombreEspecial}<br>
+                            Descripción: ${cotizacion.Descripcion}<br>
+                            Costo: ${cotizacion.Costo}<br>
+                            Fecha: ${cotizacion.FechaRecibido}
+                        </p><hr>`;
+                });
+            }
+        })
+        .catch(error => {
+            console.error('Error al obtener las cotizaciones:', error);
+        });
+}
